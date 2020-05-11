@@ -45,7 +45,7 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed):
     """
     np.random.seed(seed)
     tf.random.set_seed(seed)
-    
+    #train, test are tuples (x_trains, y_trains), (x_test, y_test)
     train, test = load_dataset(dataset, W, iid)
 
     master_model = model_fn()
@@ -216,9 +216,9 @@ def main():
     # FedAvg / CE-FedAvg hyperparameters
     E           = 1              
     B           = 20            
-    W           = 10            # number of workers 
-    IID         = False         
-    R           = 100           # number of rounds 
+    W           = 5            # number of workers 
+    IID         = True         
+    R           = 10           # number of rounds 
     C           = 0.5           
     SPARSITY    = 0.6           
     LR          = 0.2           

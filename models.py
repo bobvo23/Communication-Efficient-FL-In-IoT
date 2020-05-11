@@ -133,11 +133,13 @@ class FedAvgModel(Model):
         y (array):  one-hot labels, shape [total_samples, num_classes]
         B (int):    batch size
         """
+        #Devide training data in to batches
         b_pr_e = x.shape[0] // B 
         
+        #Looping through all batches and perform training for that batch: 
         for b in range(b_pr_e):
             self.train_step(x[b*B:(b+1)*B], y[b*B:(b+1)*B])
-        
+        #If there are remaining (droplast =False), train on the remaining data
         if b_pr_e * B < x.shape[0]:
             self.train_step(x[b_pr_e*B:], y[b_pr_e*B:])
 

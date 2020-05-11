@@ -58,6 +58,8 @@ def split_iid(x, y, W):
     ys (list[array]):   worker y data after shuffling, length W
     """
     ord = np.random.permutation(y.shape[0])
+    #Split x to W shards
+    #TODO 3: change np.array_split to random replace =True
     xs = np.array_split(x[ord], W)
     ys = np.array_split(y[ord], W)
     
@@ -101,6 +103,8 @@ def split_niid(x, y, W, n_frag):
 def load_dataset(dataset, W, iid):
     """
     Load given dataset, split into W partitions.
+    1/Flatten training/testing dataset
+    2/Normalize from 0-255 to 0-1, Convert to Float32
     
     Parameters:
     dataset (str):  'mnist' or 'cifar'
