@@ -59,7 +59,7 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
     s (float):              sparsity 0 <= s < 1
     seed (int):             random seed for trial
     """
-    print(Running CE FED AVG)
+    print("Running CE FED AVG")
     np.random.seed(seed)
     tf.random.set_seed(seed)
     #train, test are tuples (x_trains, y_trains), (x_test, y_test)
