@@ -7,7 +7,7 @@ import numpy as np
 import os 
 import wandb
 import time
-from tqdm import tqdm
+from tqdm.auto import tqdm, trange
 debug = 0
 from fed_base_options import args_parser
 #wandb login 3ba3d83a8f834e66ec78450600440e4f06066167
@@ -59,6 +59,7 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
     s (float):              sparsity 0 <= s < 1
     seed (int):             random seed for trial
     """
+    print(Running CE FED AVG)
     np.random.seed(seed)
     tf.random.set_seed(seed)
     #train, test are tuples (x_trains, y_trains), (x_test, y_test)
@@ -218,6 +219,9 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
     fname = get_out_fname(  'ce_fedavg', master_model.name, C, E, 
                             W, iid, s, None, seed)
     save_data(fname, [central_errs, central_accs])
+    wandb.log({
+            "Experiment CEFED": fname
+        }) 
 
 
 def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed,args):
@@ -238,6 +242,7 @@ def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed,args):
     lr (float):             SGD learning rate used
     seed (int):             random seed for trial
     """
+    print("Running FED AVG (SGD)")
     np.random.seed(seed)
     tf.random.set_seed(seed)
     
@@ -253,7 +258,7 @@ def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed,args):
     worker_ids = np.arange(W)
     workers_per_round = max(int(C * W), 1)
     
-    for r in range(R):
+    for r in tqdm(range(R)):
         round_master_weights = master_model.get_weights()
 
         # to store aggregate updates
@@ -325,6 +330,9 @@ def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed,args):
     # save stats
     fname = get_out_fname('fedavg', master_model.name, C, E, W, iid, s, lr, seed)
     save_data(fname, [central_errs, central_accs])
+    wandb.log({
+        "Experiment FEDAVG": fname
+    }) 
 
 
 def main():
