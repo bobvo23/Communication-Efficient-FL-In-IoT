@@ -8,7 +8,6 @@ import os
 import wandb
 import time
 from tqdm import tqdm
-
 debug = 0
 from fed_base_options import args_parser
 #wandb login 3ba3d83a8f834e66ec78450600440e4f06066167
@@ -203,7 +202,8 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
             "Test Acc CEFED": test_acc,
             #"lr": args.lr,
             'Best_Acc CEFED': best_acc,
-            'Max round CEFED': max_round
+            'Max round CEFED': max_round,
+            'Loss CEFED': err
         }) 
         if best_acc >= args.target_acc:
             print('Accuracy reached')
@@ -308,7 +308,8 @@ def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed):
             "Test Acc FEDAVG": test_acc,
             #"lr": args.lr,
             'Best Acc FEDAVG': best_acc,
-            'Max round FEDAVG': max_round
+            'Max round FEDAVG': max_round,
+            'Loss FEDAVG': err
         }) 
         if best_acc >= args.target_acc:
             print('Accuracy reached')
