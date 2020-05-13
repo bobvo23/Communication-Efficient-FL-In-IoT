@@ -193,10 +193,12 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
                                                     agg_optim))
                 #Check the accurary
         err, test_acc = master_model.test(test[0], test[1], test[0].shape[0])
+        test_acc = test_acc*100
 
         if test_acc > best_acc:
             best_acc = test_acc
             max_round = r
+        
         wandb.log({
             "Test Acc": test_acc,
             "lr": args.lr,
