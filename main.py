@@ -200,10 +200,10 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
             max_round = r+1
         
         wandb.log({
-            "Test Acc": test_acc,
-            "lr": args.lr,
-            'Best_Acc': best_acc,
-            'Max round': max_round
+            "Test Acc CEFED": test_acc,
+            #"lr": args.lr,
+            'Best_Acc CEFED': best_acc,
+            'Max round CEFED': max_round
         }) 
         if best_acc >= args.target_acc:
             print('Accuracy reached')
@@ -213,98 +213,117 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
     print('Round {}/{}, err = {:.5f}, acc = {:.5f}'.format(R, R, err, acc))
     central_errs.append(err)
     central_accs.append(acc)
-    print('\n Total Run Time: {0:0.4f}'.format(time.time()-start_time))    
+    
     # save stats
     fname = get_out_fname(  'ce_fedavg', master_model.name, C, E, 
                             W, iid, s, None, seed)
     save_data(fname, [central_errs, central_accs])
 
 
-# def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed):
-#     """
-#     Load dataset and perform R rounds of FedAvg using given FedAvg parameters. 
-#     Saves round errors and accuracies at server in file with exp details.
+def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed):
+    """
+    Load dataset and perform R rounds of FedAvg using given FedAvg parameters. 
+    Saves round errors and accuracies at server in file with exp details.
     
-#     Parameters:
-#     dataset (str):          'mnist' or 'cifar'
-#     model_fn (FedAvgModel): callable *not* instance of model class to use 
-#     C (float):              fraction of workers used per round
-#     E (int):                number of local worker epochs of training
-#     B (int):                worker batch size 
-#     W (int):                number of workers 
-#     iid (bool):             iid or non-iid data partition
-#     R (int):                total number of rounds to run
-#     s (float):              sparsity 0 <= s < 1
-#     lr (float):             SGD learning rate used
-#     seed (int):             random seed for trial
-#     """
-#     np.random.seed(seed)
-#     tf.random.set_seed(seed)
+    Parameters:
+    dataset (str):          'mnist' or 'cifar'
+    model_fn (FedAvgModel): callable *not* instance of model class to use 
+    C (float):              fraction of workers used per round
+    E (int):                number of local worker epochs of training
+    B (int):                worker batch size 
+    W (int):                number of workers 
+    iid (bool):             iid or non-iid data partition
+    R (int):                total number of rounds to run
+    s (float):              sparsity 0 <= s < 1
+    lr (float):             SGD learning rate used
+    seed (int):             random seed for trial
+    """
+    np.random.seed(seed)
+    tf.random.set_seed(seed)
     
-#     train, test = load_dataset(dataset, W, iid)
+    train, test = load_dataset(dataset, W, iid)
     
-#     master_model = model_fn()
-#     worker_model = model_fn()
+    master_model = model_fn()
+    worker_model = model_fn()
     
-#     central_errs = []
-#     central_accs = []
-#     best_acc = 0
-#     worker_ids = np.arange(W)
-#     workers_per_round = max(int(C * W), 1)
+    central_errs = []
+    central_accs = []
+    best_acc = 0
+    max_round=0
+    worker_ids = np.arange(W)
+    workers_per_round = max(int(C * W), 1)
     
-#     for r in range(R):
-#         round_master_weights = master_model.get_weights()
+    for r in range(R):
+        round_master_weights = master_model.get_weights()
 
-#         # to store aggregate updates
-#         agg_model = zeros_like_model(round_master_weights)
+        # to store aggregate updates
+        agg_model = zeros_like_model(round_master_weights)
         
-#         round_total_samples = 0
+        round_total_samples = 0
         
-#         err, acc = master_model.test(test[0], test[1], B)
-#         print('Round {}/{}, err = {:.5f}, acc = {:.5f}'.format(r, R, err, acc))
-#         central_errs.append(err)
-#         central_accs.append(acc)
+        err, acc = master_model.test(test[0], test[1], B)
+        print('Round {}/{}, err = {:.5f}, acc = {:.5f}'.format(r, R, err, acc))
+        central_errs.append(err)
+        central_accs.append(acc)
         
-#         # indexes of workers participating in round
-#         choices = np.random.choice(worker_ids, workers_per_round, replace=False)
+        # indexes of workers participating in round
+        choices = np.random.choice(worker_ids, workers_per_round, replace=False)
         
-#         for w in choices:
-#             # "download" global model
-#             worker_model.set_weights(round_master_weights)
+        for w in choices:
+            # "download" global model
+            worker_model.set_weights(round_master_weights)
 
-#             w_samples = train[0][w].shape[0]
-#             round_total_samples += w_samples
+            w_samples = train[0][w].shape[0]
+            round_total_samples += w_samples
             
-#             # train worker model for given num epochs
-#             for e in range(E):
-#                 w_x, w_y = shuffle_client_data((train[0][w], train[1][w]))
-#                 worker_model.train(w_x, w_y, B)
+            # train worker model for given num epochs
+            for e in range(E):
+                w_x, w_y = shuffle_client_data((train[0][w], train[1][w]))
+                worker_model.train(w_x, w_y, B)
             
-#             worker_deltas = minus_model_ws( worker_model.get_weights(),
-#                                             round_master_weights)
+            worker_deltas = minus_model_ws( worker_model.get_weights(),
+                                            round_master_weights)
             
-#             # compress and decompress deltas as per (part of) Algorithm 1
-#             if s > 0:
-#                 worker_deltas = compress_fed_avg_deltas(worker_deltas, s)
+            # compress and decompress deltas as per (part of) Algorithm 1
+            if s > 0:
+                worker_deltas = compress_fed_avg_deltas(worker_deltas, s)
             
-#             # add to aggregate model, weighted by local samples
-#             p_deltas = multiply_model_ws(worker_deltas, w_samples)
-#             agg_model = add_model_ws(agg_model, p_deltas)
+            # add to aggregate model, weighted by local samples
+            p_deltas = multiply_model_ws(worker_deltas, w_samples)
+            agg_model = add_model_ws(agg_model, p_deltas)
         
-#         # global model is weighted average of client models
-#         round_deltas = divide_model_ws(agg_model, round_total_samples)
-#         master_model.set_weights(add_model_ws(round_master_weights, round_deltas))
+        # global model is weighted average of client models
+        round_deltas = divide_model_ws(agg_model, round_total_samples)
+        master_model.set_weights(add_model_ws(round_master_weights, round_deltas))
+
+                        #Check the accurary
+        err, test_acc = master_model.test(test[0], test[1], test[0].shape[0])
+        test_acc = test_acc*100
+
+        if test_acc > best_acc:
+            best_acc = test_acc
+            max_round = r+1
+        
+        wandb.log({
+            "Test Acc FEDAVG": test_acc,
+            #"lr": args.lr,
+            'Best Acc FEDAVG': best_acc,
+            'Max round FEDAVG': max_round
+        }) 
+        if best_acc >= args.target_acc:
+            print('Accuracy reached')
+            break
 
 
         
-#     err, acc = master_model.test(test[0], test[1], B)
-#     print('Round {}/{}, err = {:.5f}, acc = {:.5f}'.format(R, R, err, acc))
-#     central_errs.append(err)
-#     central_accs.append(acc)
+    err, acc = master_model.test(test[0], test[1], B)
+    print('Round {}/{}, err = {:.5f}, acc = {:.5f}'.format(R, R, err, acc))
+    central_errs.append(err)
+    central_accs.append(acc)
         
-#     # save stats
-#     fname = get_out_fname('fedavg', master_model.name, C, E, W, iid, s, lr, seed)
-#     save_data(fname, [central_errs, central_accs])
+    # save stats
+    fname = get_out_fname('fedavg', master_model.name, C, E, W, iid, s, lr, seed)
+    save_data(fname, [central_errs, central_accs])
 
 
 def main():
@@ -337,11 +356,12 @@ def main():
 
     for seed in args.seed:
         # run FedAvg
-        # run_fed_avg(DATASET, model_fn, C, E, B, W, IID, R, SPARSITY, LR, seed)
+        run_fed_avg(args.dataset, model_fn, args.C, args.E, args.B, args.W, args.iid, args.R, args.S, args.lr, seed)
     
         # Run CE-FedAvg
         #TODO:2: add to argsparse
         run_ce_fed_avg(args.dataset, model_fn, args.C, args.E, args.B, args.W, args.iid, args.R, args.S, seed,args)
+    print('\n Total Run Time: {0:0.4f}'.format(time.time()-start_time))    
 
 if __name__ == '__main__':
     main()

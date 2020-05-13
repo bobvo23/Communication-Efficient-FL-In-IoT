@@ -277,7 +277,7 @@ def exp_q(a):
     
     q = np.zeros(a.shape, dtype=np.uint8)
 
-    epsilon=1e-07
+    epsilon=1e-09
     
     pows = np.log(np.abs(a), where=a!=0) / (np.log(b +epsilon))       # line 4 of Alg 3
     # very small values in b sometimes produce overflows in np.log, resulting
