@@ -213,7 +213,7 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
     print('Round {}/{}, err = {:.5f}, acc = {:.5f}'.format(R, R, err, acc))
     central_errs.append(err)
     central_accs.append(acc)
-        
+    print('\n Total Run Time: {0:0.4f}'.format(time.time()-start_time))    
     # save stats
     fname = get_out_fname(  'ce_fedavg', master_model.name, C, E, 
                             W, iid, s, None, seed)
@@ -321,7 +321,7 @@ def main():
     if args.optimizer =='sgd':
         optim = lambda: SGD(args.lr)
     elif args.optimizer =='adam' :
-        optim = lambda: Adam(0.001, 0.9, 0.999)
+        optim = lambda: Adam(0.0005, 0.9, 0.999)
     else:
         print('Err: Unknown Optimizer')
     

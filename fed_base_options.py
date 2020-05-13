@@ -22,7 +22,7 @@ def args_parser():
                         help="the number of local epochs: E")
     parser.add_argument('--B', type=int, default=20,
                         help="local batch size: B")
-    parser.add_argument('--lr', type=float, default=0.2,
+    parser.add_argument('--lr', type=float, default=0.1,
                         help='learning rate')
     parser.add_argument('--momentum', type=float, default=0.95,
                         help='SGD momentum (default: 0.9)')
@@ -46,7 +46,7 @@ def args_parser():
                         help='Default set to IID. Set to 0 for non-IID.')
    
     parser.add_argument('--verbose', type=int, default=1, help='verbose')
-    parser.add_argument('--seed', nargs='+', default=[0], help='random seed')
+    parser.add_argument('--seed', nargs='+', default=[47], help='random seed')
 
 
     args = parser.parse_args()
