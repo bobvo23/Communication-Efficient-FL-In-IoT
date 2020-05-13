@@ -201,11 +201,11 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
             max_round = r+1
         
         wandb.log({
-            "Test Acc CEFED": test_acc,
+            "Test Acc CE FED": test_acc,
             #"lr": args.lr,
-            'Best_Acc CEFED': best_acc,
+            'Best Acc CE FED': best_acc,
             'Max R CE FED': max_round,
-            'Loss CEFED': err
+            'Loss CE FED': err
         },step=r+1) 
         if best_acc >= args.target_acc:
             print('Accuracy reached')
@@ -368,11 +368,12 @@ def main():
     for seed in args.seed:
         # run FedAvg
         #print()
-        run_fed_avg(args.dataset, model_fn, args.C, args.E, args.B, args.W, args.iid, args.R, args.S, args.lr, seed,args)
-    
+       
         # Run CE-FedAvg
         #TODO:2: add to argsparse
         run_ce_fed_avg(args.dataset, model_fn, args.C, args.E, args.B, args.W, args.iid, args.R, args.S, seed,args)
+        run_fed_avg(args.dataset, model_fn, args.C, args.E, args.B, args.W, args.iid, args.R, args.S, args.lr, seed,args)
+    
     print('\n Total Run Time: {0:0.4f}'.format(time.time()-start_time))    
 
 if __name__ == '__main__':
