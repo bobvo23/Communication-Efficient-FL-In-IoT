@@ -12,7 +12,7 @@ def args_parser():
     # federated arguments (Notation for the arguments followed from paper)
     parser.add_argument('--R', type=int, default=200,
                         help="number of rounds of training")
-    parser.add_argument('--target-acc', type=float, default=90.00,
+    parser.add_argument('--target-acc', type=float, default=97.00,
                         help='learning rate')
     parser.add_argument('--W', type=int, default=5,
                         help="number of users: ")

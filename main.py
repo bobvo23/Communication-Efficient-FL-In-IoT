@@ -197,7 +197,7 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
 
         if test_acc > best_acc:
             best_acc = test_acc
-            max_round = r
+            max_round = r+1
         
         wandb.log({
             "Test Acc": test_acc,
