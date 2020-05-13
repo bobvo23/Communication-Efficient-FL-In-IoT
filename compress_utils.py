@@ -20,6 +20,9 @@ def sparsify_flatten(w, s):
     w_vals (array):     values after sparsification, shape [w.size * s]
     indexes (array):    indexs of w_vals in flattened w, shape [w.size * s]
     """
+    #TODO3: how about this sorted(range(len(a)), key=lambda i: a[i])[-2:]
+    #https://stackoverflow.com/questions/13070461/get-indices-of-the-top-n-values-of-a-list
+
     # ce-fedavg occasionally produces nan's/inf's, so catch them here
     w_flat = np.nan_to_num(w.flatten(), nan=0, posinf=0, neginf=0)
     

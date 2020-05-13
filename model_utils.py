@@ -48,6 +48,12 @@ def zeros_like_model(a):
     """
     return [[np.zeros_like(w) for w in layer] for layer in a]
 
+def zeros_like_optim(a):
+    """
+    Returns optim where each array is zeros like those in a.
+    """
+    return [np.zeros_like(v, dtype=v.dtype) for v in a]
+
 
 def add_optim_ws(a, b):
     """
@@ -77,11 +83,6 @@ def divide_optim_ws(a, x):
     return [(v / x).astype(v.dtype) for v in a]
 
     
-def zeros_like_optim(a):
-    """
-    Returns optim where each array is zeros like those in a.
-    """
-    return [np.zeros_like(v, dtype=v.dtype) for v in a]
 
 
 def flatten_model(m):
@@ -111,13 +112,7 @@ def unflatten_model(m, ref):
 
 def get_corr_optims(model):
     """
-    TF does not seem to have an easy way of finding which optimizer arrays/
-    values correspond to which weight array in the model. This function uses the
-    name attributes TF generates for weights and optimizer values to return a 
-    vector of length num_optim_params, where each value is the index of the 
-    weight in the flattened model that that optimizer param is for. -1 values 
-    indicate there was no matching weight (e.g. for the stored iteration number
-    that Adam/RMSProp/etc use).
+    Matching params between the optimizer and the models params
     
     Parameters:
     model (FedAvgModel):    model to generate match list for 

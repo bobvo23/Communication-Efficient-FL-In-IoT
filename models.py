@@ -91,6 +91,8 @@ class FedAvgModel(Model):
         Returns:
         (mean accuracy, mean loss) over data 
         """
+
+        #perform fwd and backward step
         grads, loss, preds = self.get_grads_loss_preds(x, y)
         self.optimizer.apply_gradients(zip(grads, self.trainable_variables))
         # calc top-1 accuracy
@@ -133,7 +135,10 @@ class FedAvgModel(Model):
         y (array):  one-hot labels, shape [total_samples, num_classes]
         B (int):    batch size
         """
+        #TODO1: replace this one with next(iter)
+        #this function can be eliminated
         #Devide training data in to batches
+        
         b_pr_e = x.shape[0] // B 
         
         #Looping through all batches and perform training for that batch: 
@@ -216,6 +221,8 @@ class MNIST2NNModel(FedAvgModel):
         super(MNIST2NNModel, self).__init__(optimizer, loss_calc)
         self.dense1 = Dense(200, activation='relu')
         self.dense2 = Dense(200, activation='relu')
+        #TODO1: eliminate the softmax function by
+        #loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
         self.out    = Dense(outputs, activation='softmax')
         
         self.layer_list = [self.dense1, self.dense2, self.out]
@@ -283,6 +290,9 @@ class MNISTCNNModel(FedAvgModel):
         # because of TF 2's eager execution I can't find a way of initialising 
         # the model weights and optimizer values easily without running a single
         # training step when the model is created
+        #TODO1: model.add(Dense(100, kernel_initializer = init))
+        #from keras.initializers import glorot_normal, glorot_uniform, he_normal, he_uniform, Constant
+        
         self.train_step(np.zeros((1,img_size,img_size,channels), dtype=np.float32), 
                         np.zeros((1,outputs), dtype=np.float32))
         

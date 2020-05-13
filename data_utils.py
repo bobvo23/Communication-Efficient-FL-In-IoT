@@ -1,9 +1,11 @@
 """
 Utils for loading/handling datasets for use with FL.
 """
+
 import numpy as np
 import tensorflow as tf
 
+debug=0
 
 def shuffle_client_data(data):
     """ Returns a copy of a client's (x, y) shuffled using the same order. """
@@ -59,7 +61,7 @@ def split_iid(x, y, W):
     """
     ord = np.random.permutation(y.shape[0])
     #Split x to W shards
-    #TODO 3: change np.array_split to random replace =True
+    #TODO 2: change np.array_split to random replace =True
     xs = np.array_split(x[ord], W)
     ys = np.array_split(y[ord], W)
     
@@ -124,7 +126,16 @@ def load_dataset(dataset, W, iid):
         x_test = x_test.reshape((-1, 784))
     else:
         raise RuntimeError('Unsupported dataset string...')
-        
+
+    if debug:
+        print("#take 1/100 of the original data to expedite debugging")
+        x_trains, y_trains = split_iid(x_train, y_train, 100)
+        x_train, y_train = x_trains[0], y_trains[0]
+        x_tests, y_tests = split_iid(x_test, y_test, 100)
+        x_test, y_test = x_tests[0], y_tests[0]
+
+    print("Training total {} samples".format(x_train.shape[0]))
+
     x_train = (x_train / 255).astype(np.float32)
     x_test = (x_test / 255).astype(np.float32)
         
@@ -136,4 +147,27 @@ def load_dataset(dataset, W, iid):
     y_trains = [to_oh(y, 10) for y in y_trains]
     y_test = to_oh(y_test, 10)
     
+    #Simplify training for debugging
+    
+
     return (x_trains, y_trains), (x_test, y_test)
+
+
+
+
+def exp_details(args):
+    print('\nExperimental details:')
+    print(f'    Model     : {args.model}')
+    print(f'    Optimizer : {args.optimizer}')
+    print(f'    Learning  : {args.lr}')
+    print(f'    Global Rounds   : {args.R}\n')
+
+    print('    Federated parameters:')
+    if args.iid:
+        print('    IID')
+    else:
+        print('    Non-IID')
+    print(f'    Fraction of users C : {args.C}')
+    print(f'    Local Batch size  B : {args.B}')
+    print(f'    Local Epochs      E : {args.E}\n')
+    return
