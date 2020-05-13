@@ -220,7 +220,7 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
     save_data(fname, [central_errs, central_accs])
 
 
-def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed):
+def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed,args):
     """
     Load dataset and perform R rounds of FedAvg using given FedAvg parameters. 
     Saves round errors and accuracies at server in file with exp details.
@@ -357,7 +357,8 @@ def main():
 
     for seed in args.seed:
         # run FedAvg
-        run_fed_avg(args.dataset, model_fn, args.C, args.E, args.B, args.W, args.iid, args.R, args.S, args.lr, seed)
+        #print()
+        run_fed_avg(args.dataset, model_fn, args.C, args.E, args.B, args.W, args.iid, args.R, args.S, args.lr, seed,args)
     
         # Run CE-FedAvg
         #TODO:2: add to argsparse
