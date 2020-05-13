@@ -113,6 +113,7 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
         if debug:
             print("Original err, acc {},{}".format(err,acc))
             print("Propose err, acc {},{}".format(err_alt,acc_alt))
+        print("")
         print('Round {}/{}, err = {:.5f}, acc = {:.5f}'.format(r, R, err, acc))
         central_errs.append(err)
         central_accs.append(acc)
@@ -203,9 +204,9 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
             "Test Acc CEFED": test_acc,
             #"lr": args.lr,
             'Best_Acc CEFED': best_acc,
-            'Max round CEFED': max_round,
+            'Max R CE FED': max_round,
             'Loss CEFED': err
-        }) 
+        },step=r+1) 
         if best_acc >= args.target_acc:
             print('Accuracy reached')
             break
@@ -267,6 +268,7 @@ def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed,args):
         round_total_samples = 0
         
         err, acc = master_model.test(test[0], test[1], B)
+        print("")
         print('Round {}/{}, err = {:.5f}, acc = {:.5f}'.format(r, R, err, acc))
         central_errs.append(err)
         central_accs.append(acc)
@@ -308,14 +310,14 @@ def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed,args):
         if test_acc > best_acc:
             best_acc = test_acc
             max_round = r+1
-        
+        #{'loss': 0.2}, step=step
         wandb.log({
             "Test Acc FEDAVG": test_acc,
             #"lr": args.lr,
             'Best Acc FEDAVG': best_acc,
-            'Max round FEDAVG': max_round,
+            'Max R FEDAVG': max_round,
             'Loss FEDAVG': err
-        }) 
+        },step=r+1) 
         if best_acc >= args.target_acc:
             print('Accuracy reached')
             break
