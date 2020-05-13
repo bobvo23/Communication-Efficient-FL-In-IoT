@@ -5,7 +5,7 @@ Utils for loading/handling datasets for use with FL.
 import numpy as np
 import tensorflow as tf
 
-debug=0
+debugdata=0
 
 def shuffle_client_data(data):
     """ Returns a copy of a client's (x, y) shuffled using the same order. """
@@ -127,7 +127,7 @@ def load_dataset(dataset, W, iid):
     else:
         raise RuntimeError('Unsupported dataset string...')
 
-    if debug:
+    if debugdata:
         print("#take 1/100 of the original data to expedite debugging")
         x_trains, y_trains = split_iid(x_train, y_train, 100)
         x_train, y_train = x_trains[0], y_trains[0]

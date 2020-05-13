@@ -11,7 +11,7 @@ from tqdm.auto import tqdm, trange
 debug = 0
 from fed_base_options import args_parser
 #wandb login 3ba3d83a8f834e66ec78450600440e4f06066167
-wandb.init(project='fed_CEAVG_IOT')
+wandb.init(project='fed_CEAVG_FED')
 #suspend TF outputs
 # 0 = all messages are logged (default behavior)
 # 1 = INFO messages are not printed
