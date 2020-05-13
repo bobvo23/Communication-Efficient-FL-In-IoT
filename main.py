@@ -206,7 +206,7 @@ def run_ce_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, seed,args):
             'Best Acc CE FED': best_acc,
             'Max R CE FED': max_round,
             'Loss CE FED': err,
-            'Global round': r+1
+            'CE FED round': r+1
         }) 
         if best_acc >= args.target_acc:
             print('Accuracy reached')
@@ -318,7 +318,7 @@ def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed,args):
             'Best Acc FEDAVG': best_acc,
             'Max R FEDAVG': max_round,
             'Loss FEDAVG': err,
-            'Global round': r+1
+            'FEDAVG round': r+1
         }) 
         if best_acc >= args.target_acc:
             print('Accuracy reached')
