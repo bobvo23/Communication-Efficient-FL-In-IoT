@@ -245,6 +245,16 @@ def run_fed_avg(dataset, model_fn, C, E, B, W, iid, R, s, lr, seed,args):
     seed (int):             random seed for trial
     """
     print("Running FED AVG (SGD)")
+        # Use for FedAvg
+    optim = lambda: SGD(args.lr)
+    
+    if args.model =='mlp':
+    # Use with MNIST
+        model_fn = lambda: MNIST2NNModel(optim, CatCrossEnt, 784, 10)
+    elif args.model =='cnn':
+        model_fn = lambda: MNISTCNNModel(optim, CatCrossEnt, 28, 1, 10)
+    else:
+        print("Err: Unknown model")
     np.random.seed(seed)
     tf.random.set_seed(seed)
     
@@ -373,7 +383,7 @@ def main():
        
         # Run CE-FedAvg
         #TODO:2: add to argsparse
-        run_ce_fed_avg(args.dataset, model_fn, args.C, args.E, args.B, args.W, args.iid, args.R, args.S, seed,args)
+        #run_ce_fed_avg(args.dataset, model_fn, args.C, args.E, args.B, args.W, args.iid, args.R, args.S, seed,args)
         run_fed_avg(args.dataset, model_fn, args.C, args.E, args.B, args.W, args.iid, args.R, args.S, args.lr, seed,args)
     
     print('\n Total Run Time: {0:0.4f}'.format(time.time()-start_time))    
