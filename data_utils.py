@@ -170,4 +170,5 @@ def exp_details(args):
     print(f'    Fraction of users C : {args.C}')
     print(f'    Local Batch size  B : {args.B}')
     print(f'    Local Epochs      E : {args.E}\n')
+    print(f'    Sparcity          S : {args.S}\n')
     return
